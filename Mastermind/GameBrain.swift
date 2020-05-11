@@ -24,10 +24,10 @@ struct GameBrain {
     
     mutating func makeGuess(sequence: [GuessOption]) -> GuessResult {
         guard sequence.count == correctSequence.count else {
-            return .invalidSequence
+            return .error(.invalidSequence)
         }
         guard guessCount < guessLimit else {
-            return .noGuessesRemaining
+            return .error(.noGuessesRemaining)
         }
         guessCount += 1
         var imperfectGuesses = [GuessOption]()
@@ -46,14 +46,18 @@ struct GameBrain {
         for (guess, count) in frequencyDictionary(from: imperfectGuesses) {
             correctColorIncorrectPlaceCount += min(count, remainingCorrectSequenceGuessOptionFrequencyDict[guess] ?? 0)
         }
-        if correctColorAndPlaceCount == correctSequence.count { return .victory }
+        if correctColorAndPlaceCount == correctSequence.count { return .gameOver(.victory) }
+        if guessCount >= guessLimit { return .gameOver(.defeat) }
         let feedback = GuessFeedback(correctColorAndPlaceCount: correctColorAndPlaceCount,
-                                     correctColorIncorrectPlaceCount: correctColorIncorrectPlaceCount)
+                                     correctColorIncorrectPlaceCount: correctColorIncorrectPlaceCount,
+                                     remainingGuesses: guessLimit - guessCount)
         userGuesses.append((sequence, feedback))
         return .inProgress(feedback)
     }
     
     // MARK: -- Internal Properties
+    
+    let correctSequence: [GuessOption]
     
     var sequenceLength: Int {
         return correctSequence.count
@@ -67,14 +71,24 @@ struct GameBrain {
     
     enum GuessResult: Equatable {
         case inProgress(GuessFeedback)
+        case error(GuessError)
+        case gameOver(GameOver)
+    }
+    
+    enum GuessError: Error {
         case noGuessesRemaining
         case invalidSequence
+    }
+    
+    enum GameOver {
         case victory
+        case defeat
     }
     
     struct GuessFeedback: Equatable {
         let correctColorAndPlaceCount: Int
         let correctColorIncorrectPlaceCount: Int
+        let remainingGuesses: Int
     }
     
     enum GuessOption: String, CaseIterable {
@@ -98,8 +112,7 @@ struct GameBrain {
 
     // MARK: -- Private Properties
     
-    private let correctSequence: [GuessOption]
+    private(set) var guessLimit = 6
     private(set) var userGuesses = [([GuessOption], GuessFeedback)]()
     private var guessCount = 0
-    private var guessLimit = 6
 }

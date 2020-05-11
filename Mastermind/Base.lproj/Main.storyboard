@@ -16,23 +16,31 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="r1f-Sv-F6b">
-                                <rect key="frame" x="0.0" y="44" width="414" height="731"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="690"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X8h-np-xcT">
-                                <rect key="frame" x="119.5" y="795" width="175" height="47"/>
+                                <rect key="frame" x="119.5" y="754" width="175" height="47"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="29"/>
                                 <state key="normal" title="Submit Guess"/>
                                 <connections>
-                                    <action selector="makeNewGuess:" destination="BYZ-38-t0r" eventType="touchUpInside" id="RLt-k4-rs1"/>
+                                    <action selector="bottomButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Pik-Ly-WP4"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Remaining Guesses: n " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rwe-2R-kWE">
+                                <rect key="frame" x="120" y="821" width="174" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="X8h-np-xcT" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="10V-OR-mS6"/>
+                            <constraint firstItem="Rwe-2R-kWE" firstAttribute="top" secondItem="X8h-np-xcT" secondAttribute="bottom" constant="20" id="7ts-9Q-U2m"/>
                             <constraint firstItem="r1f-Sv-F6b" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="GHi-Wc-34k"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="X8h-np-xcT" secondAttribute="bottom" constant="20" id="jHp-pg-Fg6"/>
+                            <constraint firstItem="Rwe-2R-kWE" firstAttribute="centerX" secondItem="X8h-np-xcT" secondAttribute="centerX" id="Mta-q7-Trb"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Rwe-2R-kWE" secondAttribute="bottom" constant="20" id="eN7-7M-zHX"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="r1f-Sv-F6b" secondAttribute="trailing" id="lYV-xX-CQR"/>
                             <constraint firstItem="r1f-Sv-F6b" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="vRj-nI-YSw"/>
                             <constraint firstItem="X8h-np-xcT" firstAttribute="top" secondItem="r1f-Sv-F6b" secondAttribute="bottom" constant="20" id="xJA-UH-LOe"/>
@@ -40,7 +48,9 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="bottomButton" destination="X8h-np-xcT" id="dwt-Uv-qgn"/>
                         <outlet property="mastermindTableView" destination="r1f-Sv-F6b" id="3oz-rf-TeW"/>
+                        <outlet property="remainingGuessesLabel" destination="Rwe-2R-kWE" id="Nzd-31-aja"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

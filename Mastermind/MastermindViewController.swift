@@ -10,17 +10,32 @@ import UIKit
 
 class MastermindViewController: UIViewController {
 
+    enum State: Equatable {
+        case guessing
+        case gameEnd(GameBrain.GameOver)
+    }
+    
     @IBOutlet weak var mastermindTableView: UITableView!
+    @IBOutlet var bottomButton: UIButton!
+    @IBOutlet var remainingGuessesLabel: UILabel!
     
     lazy var currentUserGuess: Guess = {
         self.brain.mostRecentGuess
     }()
+    
+    var state = State.guessing {
+        didSet {
+            guard oldValue != state else { return }
+            handleStateUpdate(to: state)
+        }
+    }
     
     var brain = GameBrain()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureTableView()
+        remainingGuessesLabel.text = "Guesses Remaining: \(brain.guessLimit)"
     }
     
     func configureTableView() {
@@ -29,18 +44,52 @@ class MastermindViewController: UIViewController {
         mastermindTableView.dataSource = self
     }
     
-    @IBAction func makeNewGuess(_ sender: UIButton) {
-        switch brain.makeGuess(sequence: currentUserGuess) {
-        case let .inProgress(feedback):
-            print(feedback)
+    @IBAction func bottomButtonPressed(_ sender: UIButton) {
+        switch state {
+        case .guessing:
+            let guessFeedback = brain.makeGuess(sequence: currentUserGuess)
             mastermindTableView.reloadData()
-        case .victory:
-            print("you win!")
-        case .noGuessesRemaining:
-            print("no guesses remaining to make this guess")
-        case .invalidSequence:
-            print("an error occurred with the sequence")
+            switch guessFeedback {
+            case let .inProgress(feedback):
+                remainingGuessesLabel.text = "Guesses Remaining: \(feedback.remainingGuesses)"
+            case let .gameOver(gameOverCondition):
+                state = .gameEnd(gameOverCondition)
+            case let .error(error):
+                print("An error occurred: \(error)")
+            }
+        case .gameEnd:
+            state = .guessing
         }
+    }
+    
+    private func handleStateUpdate(to newState: State) {
+        switch state {
+        case .guessing:
+            resetGame()
+        case let .gameEnd(status):
+            bottomButton.setTitle("Reset Game", for: .normal)
+            let title: String
+            let message: String
+            switch status {
+            case .victory:
+                title = "Victory!"
+                message = "You have won!"
+            case .defeat:
+                title = "Defeat!"
+                message = "The correct sequence was: \(brain.correctSequence.map{ $0.rawValue })"
+                remainingGuessesLabel.text = "Remaining Guesses: \(0)"
+            }
+            let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(alertVC, animated: true, completion: nil)
+        }
+    }
+    
+    private func resetGame() {
+        bottomButton.setTitle("Submit Guess", for: .normal)
+        brain = GameBrain()
+        mastermindTableView.reloadData()
+        remainingGuessesLabel.text = "Remaining Guesses: \(brain.guessLimit)"
     }
 }
 

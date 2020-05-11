@@ -2,6 +2,13 @@ import UIKit
 
 class MastermindTableViewCell: UITableViewCell {
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        viewModel = nil
+//        perfectPinsLabel.text = ""
+//        imperfectPinsLabel.text = ""
+    }
+    
     lazy var imperfectPinsLabel: UILabel = {
         let label = UILabel()
         return label
@@ -86,7 +93,10 @@ class MastermindTableViewCell: UITableViewCell {
             case let .historical(vm):
                 perfectPinsLabel.text = String(repeating: "🔴", count: vm.perfectGuessCount)
                 imperfectPinsLabel.text = String(repeating: "⚪️", count: vm.imperfectGuessCount)
-            default: break
+            case .none:
+                perfectPinsLabel.text = ""
+                imperfectPinsLabel.text = ""
+                mastermindCellsCollectionView.reloadData()
             }
         }
     }
