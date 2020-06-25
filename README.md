@@ -1,1 +1,3 @@
 # Mastermind
+
+![mastermind](./mastermind.gif)
